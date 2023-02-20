@@ -13,12 +13,14 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private var downloadID: Long = 0
@@ -37,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         download_button.setOnClickListener {
             createChannel(getString(R.string.channel_id), getString(R.string.button_name))
             if (radioGroup.checkedRadioButtonId == -1)
-                showToastMessage()
+                showToastMessage(R.string.please_select_file)
             else {
                 when (radioGroup.checkedRadioButtonId) {
                     radio_glide.id -> download(Links.GLIDE)
@@ -45,12 +47,13 @@ class MainActivity : AppCompatActivity() {
                     radio_retrofit.id -> download(Links.RETROFIT)
                 }
                 Log.i("Main Activity", "RadioGroup.OnCheckedChangeListener: checked")
+
             }
         }
     }
 
-    private fun showToastMessage() {
-        Toast.makeText(applicationContext, R.string.please_select_file, Toast.LENGTH_SHORT)
+    private fun showToastMessage(message: Int) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT)
             .show()
     }
 

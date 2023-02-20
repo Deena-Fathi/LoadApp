@@ -4,12 +4,15 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
+import kotlinx.coroutines.delay
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
@@ -28,40 +31,46 @@ class LoadingButton @JvmOverloads constructor(
     private var buttonCircleColor: Int = ContextCompat.getColor(context, R.color.colorAccent)
     private var buttonTextColor: Int = ContextCompat.getColor(context, R.color.white)
 
-    private var valueAnimator: ValueAnimator = ValueAnimator.ofInt(0, 360).setDuration(2500)
+    private var valueAnimator: ValueAnimator = ValueAnimator.ofInt(0, 360).setDuration(2000)
 
     var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) { p, old, new ->
         when (new) {
             ButtonState.Clicked -> {
-                buttonText = resources.getString(R.string.button_clicked)
                 buttonState = ButtonState.Loading
                 isEnabled = false
             }
             ButtonState.Loading -> {
-                valueAnimator = ValueAnimator.ofInt(0, 1000).apply {
+                valueAnimator = ValueAnimator.ofInt(0, 2000).apply {
                     addUpdateListener {
                         progress = animatedValue as Int
                         invalidate()
                     }
-                    duration = 2500
+                    duration = 2000
                     doOnStart {
                         buttonText = resources.getString(R.string.button_loading)
                         isEnabled = false
+                        repeatMode = ValueAnimator.REVERSE
+                        repeatCount = ValueAnimator.INFINITE
                     }
                     doOnEnd {
                         progress = 0
                         isEnabled = true
-                        buttonText = resources.getString(R.string.button_name)
                     }
                     start()
                 }
+                isEnabled = false
             }
             ButtonState.Completed -> {
-                valueAnimator.cancel()
+                buttonText = resources.getString(R.string.downloaded)
+                progress = 0
+                isEnabled = false
+            }
+            ButtonState.Normal -> {
                 buttonText = resources.getString(R.string.button_name)
                 isEnabled = true
             }
         }
+
         invalidate()
     }
 
@@ -92,18 +101,24 @@ class LoadingButton @JvmOverloads constructor(
 
         // Draw the loading progress
         paint.color = buttonLoadingColor
-        canvas.drawRect(0f, 0f, widthSize * progress / 1000f, heightSize.toFloat(), paint)
+        canvas.drawRect(0f, 0f, widthSize * progress / 2000f, heightSize.toFloat(), paint)
 
         // Draw the progress circle
-        val circleAngle = progress / 1000f * 360f
+        val circleAngle = progress / 2000f * 360f
         paint.color = buttonCircleColor
         canvas.drawArc(progressArc, 0f, circleAngle, true, paint)
 
         // Draw the text
         paint.color = buttonTextColor
         paint.getTextBounds(buttonText, 0, buttonText.length, Rect())
-        canvas.drawText(buttonText, widthSize / 2f, measuredHeight.toFloat() / 2 - Rect().centerY(), paint)
+        canvas.drawText(
+            buttonText,
+            widthSize / 2f,
+            measuredHeight.toFloat() / 2 - Rect().centerY(),
+            paint
+        )
     }
+
     @SuppressLint("DrawAllocation")
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val minw: Int = paddingLeft + paddingRight + suggestedMinimumWidth
@@ -123,11 +138,13 @@ class LoadingButton @JvmOverloads constructor(
             heightSize / 2 + 25f
         )
     }
+
     fun downloadCompleted() {
-        val fraction = valueAnimator.animatedFraction
-        valueAnimator.cancel()
-        valueAnimator.setCurrentFraction(fraction + 0.1f)
-        valueAnimator.duration = 1000
-        valueAnimator.start()
+        valueAnimator.end()
+        buttonState = ButtonState.Completed
+        Handler(Looper.getMainLooper()).postDelayed({
+            buttonState = ButtonState.Normal
+        }, 2000)
     }
+
 }

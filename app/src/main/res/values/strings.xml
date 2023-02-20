@@ -10,7 +10,7 @@
     <string name="channel_id">889</string>
     <string name="channel_name">Downloaded</string>
 
-    <string name="button_name">Download</string>
+    <string name="button_name">Download selected Repository</string>
     <string name="button_loading">We are loading </string>
     <string name="title_activity_detail">Detail Activity</string>
 
@@ -24,5 +24,5 @@
     <string name="download_image">download image</string>
     <string name="fail">Fail</string>
     <string name="success">Success</string>
-    <string name="button_clicked">Clicked</string>
+    <string name="downloaded">Downloaded!</string>
 </resources>
