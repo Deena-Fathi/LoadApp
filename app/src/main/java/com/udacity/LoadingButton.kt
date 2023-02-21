@@ -15,6 +15,15 @@ import androidx.core.content.withStyledAttributes
 import kotlinx.coroutines.delay
 import kotlin.properties.Delegates
 
+/**
+ *  LoadingButton is custom view class that extends the View class in Android.
+ *  The LoadingButton has four states (ButtonState) that define its appearance and behavior:
+ *  Clicked, Loading, Completed, and Normal. Each time the button changes state, it redraws its view.
+ *
+ *  In the constructor, the LoadingButton reads attributes from a custom styleable LoadingButton,
+ *  which can be defined in XML using the <declare-styleable> tag. This allows the LoadingButton
+ *  to be customized with different colors.
+ */
 class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -33,6 +42,13 @@ class LoadingButton @JvmOverloads constructor(
 
     private var valueAnimator: ValueAnimator = ValueAnimator.ofInt(0, 360).setDuration(2000)
 
+    /**
+     * When the LoadingButton changes state, its buttonState variable is updated using the
+     * Delegates.observable() method. Depending on the new state, different actions are performed,
+     * such as changing the button text, starting or stopping a ValueAnimator, or setting the
+     * enabled state of the button. In each case, the invalidate() method is called to request
+     * a redraw of the button.
+     */
     var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) { p, old, new ->
         when (new) {
             ButtonState.Clicked -> {
@@ -91,6 +107,12 @@ class LoadingButton @JvmOverloads constructor(
         }
     }
 
+    /**
+     * In the onDraw() method, the LoadingButton draws the different components of the button,
+     * such as the background, loading progress, progress circle, and text,
+     * using the Canvas object and the Paint object.
+     */
+
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -119,6 +141,10 @@ class LoadingButton @JvmOverloads constructor(
         )
     }
 
+    /**
+     * In the onMeasure() method, the LoadingButton calculates its minimum width and height,
+     * and sets its measured dimensions using setMeasuredDimension().
+     */
     @SuppressLint("DrawAllocation")
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val minw: Int = paddingLeft + paddingRight + suggestedMinimumWidth
@@ -139,6 +165,11 @@ class LoadingButton @JvmOverloads constructor(
         )
     }
 
+    /**
+     * Finally, the LoadingButton provides a public method called downloadCompleted(),
+     * which ends the loading animation and sets the button to the Completed state.
+     * After a delay of two seconds, the button returns to its Normal state.
+     */
     fun downloadCompleted() {
         valueAnimator.end()
         buttonState = ButtonState.Completed

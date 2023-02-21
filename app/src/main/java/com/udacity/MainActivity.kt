@@ -22,13 +22,37 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
 
+/**
+ * An Android app that allows the user to download files from different links.
+ * The file can be selected from a radio group, and a progress bar indicates the download progress.
+ * Once the download is complete, a notification is sent to the user.
+ */
 class MainActivity : AppCompatActivity() {
+    //Storing the ID of the current download. It is initially set to 0.
     private var downloadID: Long = 0
-    enum class Links (val title: Int, val link: String) {
+
+    /**
+     * This is an enum class that defines the available download links.
+     * Each link has a title and a URL.
+     */
+    enum class Links(val title: Int, val link: String) {
         GLIDE(R.string.glide, "https://github.com/bumptech/glide"),
-        RETROFIT(R.string.retrofit,"https://github.com/square/retrofit"),
-        LOADAPP(R.string.LoadApp,"https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter")
+        RETROFIT(R.string.retrofit, "https://github.com/square/retrofit"),
+        LOADAPP(
+            R.string.LoadApp,
+            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
+        )
     }
+
+    /**
+     * This function is called when the activity is created.
+     * It sets the content view to the main layout file, sets the support action bar,
+     * and registers a broadcast receiver to receive download complete events.
+     * It sets an on-click listener to the download button, which first creates a notification channel,
+     * then checks if a file is selected from the radio group. If a file is selected, the download function
+     * is called with the appropriate link. Otherwise, a toast message is displayed to remind the
+     * user to select a file.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -52,11 +76,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * This function takes an integer message as an input and displays a
+     * short-duration toast message to the user.
+     */
     private fun showToastMessage(message: Int) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT)
             .show()
     }
 
+    /**
+     * The registerReceiver() method registers a BroadcastReceiver instance to listen for events
+     * when a download is completed. When a download is complete, the onReceive() method of the
+     * BroadcastReceiver instance is called. In this method, the code checks if the download ID
+     * matches the downloadID value that was set when the download was initiated. If it does,
+     * it queries the DownloadManager to get information about the completed download,
+     * and then calls the sendNotification() method to display a notification to the user.
+     */
     private val receiver = object : BroadcastReceiver() {
         @SuppressLint("Range")
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -80,6 +116,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * The download() method is used to initiate a download using the DownloadManager.
+     * It sets various properties of the download request, such as the download URL,
+     * the download title, and the description. It then enqueues the download request
+     * using the DownloadManager.
+     */
     private fun download(link: Links) {
         download_button.buttonState = ButtonState.Loading
         val request =
@@ -95,6 +137,13 @@ class MainActivity : AppCompatActivity() {
             downloadManager.enqueue(request)// enqueue puts the download request in the queue.
     }
 
+    /**
+     * The createChannel() method is used to create a notification channel for displaying notifications.
+     * If the device is running Android Oreo or later, a NotificationChannel is created with the
+     * specified ID, name, and importance level. The channel is then configured with various properties,
+     * such as whether it supports lights and vibration, the light color, and the channel description.
+     * Finally, the channel is added to the NotificationManager.
+     */
     private fun createChannel(channelId: String, channelName: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
@@ -114,6 +163,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * The sendNotification() method is used to display a notification to the user when a download is complete.
+     * It first cancels any existing notifications, and then creates a new notification using the
+     * NotificationCompat.Builder class. The notification title and message are set based on whether
+     * the download was successful or not. The notification is then displayed using the NotificationManager.
+     */
     private fun sendNotification(isSuccess: Boolean, downloadTitle: String) {
         val notificationManager = ContextCompat.getSystemService(
             this,
