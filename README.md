@@ -10,6 +10,7 @@ When a user clicks on notification, the user lands on detail activity and the no
 In detail activity, the status of the download will be displayed and animated via MotionLayout upon opening the activity.
 
 
-### Perview
+### Preview
+
 
 <img src="./Preview/app_preview.gif"/>
