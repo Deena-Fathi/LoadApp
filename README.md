@@ -11,5 +11,5 @@ In detail activity, the status of the download will be displayed and animated vi
 
 
 ### Perview
-<img src="./Preview/app_preview.gif"/>
 
+<img src="./Preview/app_preview.gif"/>
