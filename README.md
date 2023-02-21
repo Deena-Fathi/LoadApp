@@ -12,5 +12,5 @@ In detail activity, the status of the download will be displayed and animated vi
 
 ### Perview
 
-![Perview](https://github.com/Deena-Fathi/LoadApp/blob/master/Preview/app_preview.gif | width=200)
+!https://github.com/Deena-Fathi/LoadApp/blob/master/Preview/app_preview.gif
 
