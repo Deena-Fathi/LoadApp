@@ -12,6 +12,6 @@ In detail activity, the status of the download will be displayed and animated vi
 
 ### Perview
 
-<p align = "left">
+<p align = "left", width = 200 >
 ![](https://github.com/Deena-Fathi/LoadApp/blob/master/Preview/app_preview.gif)
 </p>
