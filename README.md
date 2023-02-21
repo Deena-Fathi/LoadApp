@@ -12,10 +12,5 @@ In detail activity, the status of the download will be displayed and animated vi
 
 ### Perview
 
-<p align = "left">
-<img src="./screenshots/screen_1.png" width=200>
-</p>
-<p align = "left">
-<img src="./screenshots/screen_2.png" width=200>
-  <img src="./screenshots/screen_3.png" width=200>
-</p>
+![Perview](https://github.com/Deena-Fathi/LoadApp/blob/master/Preview/app_preview.gif | width=200)
+
